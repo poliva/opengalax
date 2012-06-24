@@ -87,6 +87,7 @@ int main (int argc, char *argv[]) {
 	int first_click = 0;
 
 	int foreground = 0;
+	int init_ok=0, i;
 	int opt;
 
 	pid_t pid;
@@ -199,18 +200,26 @@ int main (int argc, char *argv[]) {
 	ev_button[3].code = BTN_RIGHT;
 	ev_button[3].value = 1;
 
-	if (!init_panel()) {
+	// panel initialization
+	for (i=0; i<10; i++) {
+		if (init_ok)
+			break;
+		init_ok = init_panel();
+	}
+
+	if (!init_ok) {
 		fprintf(stderr, "error: failed to initialize panel\n");
 		remove_pid_file();
 		if (ioctl (fd_uinput, UI_DEV_DESTROY) < 0)
 			die ("error: ioctl");
 		close (fd_uinput);
 		exit (-1);
-	} else {
-		if (foreground)
-			printf("pannel initialized\n");
 	}
 
+	if (foreground)
+		printf("pannel initialized\n");
+
+	// main bucle
 	while (1) {
 
 		// Should have select timeout, because finger down garantees many results..
