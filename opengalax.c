@@ -29,7 +29,37 @@
 
 #define DEBUG 0
 
-#define VERSION "0.1"
+#define VERSION "0.2"
+
+int init_panel() {
+
+	int i;
+	unsigned char r;
+	ssize_t res;
+	unsigned char init_seq[8] = { 0xf5, 0xf3, 0x0a, 0xf3, 0x64, 0xf3, 0xc8, 0xf4 };
+	int ret=1;
+
+	for (i=0;i<8;i++) {
+
+		usleep (10000);
+		res = write (fd_serial, &init_seq[i], 1);
+		res = read (fd_serial, &r, 1);
+
+		if (res < 0)
+			die ("error reading from serial port");
+
+		if (DEBUG)
+			printf ("SENT: %.02X READ: %.02X\n", init_seq[i], r);
+
+		if (r != 0xFA ) {
+			fprintf (stderr,"panel initialization failed: 0x%.02X != 0xFA\n", r);
+			ret=0;
+		}
+
+	}
+
+	return ret;
+}
 
 void usage() {
 	printf("opengalax v%s - (c)2012 Pau Oliva Fora <pof@eslack.org>\n", VERSION);
@@ -169,6 +199,17 @@ int main (int argc, char *argv[]) {
 	ev_button[3].code = BTN_RIGHT;
 	ev_button[3].value = 1;
 
+	if (!init_panel()) {
+		fprintf(stderr, "error: failed to initialize panel\n");
+		remove_pid_file();
+		if (ioctl (fd_uinput, UI_DEV_DESTROY) < 0)
+			die ("error: ioctl");
+		close (fd_uinput);
+		exit (-1);
+	} else {
+		if (foreground)
+			printf("pannel initialized\n");
+	}
 
 	while (1) {
 
