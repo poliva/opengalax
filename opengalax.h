@@ -64,6 +64,10 @@ init sequence:
  	send: f5 f3 0a f3 64 f3 c8 f4
  	read: fa fa fa fa fa fa fa fa
 
+return values:
+	0xFA == OK
+	0xFE == ERROR
+
 Example PDUs:
 	81 0F 3D 05 06
 	80 0F 3D 05 06

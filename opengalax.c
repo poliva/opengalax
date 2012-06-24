@@ -27,6 +27,9 @@
 #define PRESS 0x81
 #define RELEASE 0x80
 
+#define CMD_OK 0xFA
+#define CMD_ERR 0xFE
+
 #define DEBUG 0
 
 #define VERSION "0.2"
@@ -51,8 +54,8 @@ int init_panel() {
 		if (DEBUG)
 			printf ("SENT: %.02X READ: %.02X\n", init_seq[i], r);
 
-		if (r != 0xFA ) {
-			fprintf (stderr,"panel initialization failed: 0x%.02X != 0xFA\n", r);
+		if (r != CMD_OK ) {
+			fprintf (stderr,"panel initialization failed: 0x%.02X != 0x%.02X\n", r, CMD_OK);
 			ret=0;
 		}
 
