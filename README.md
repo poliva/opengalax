@@ -3,7 +3,7 @@ opengalax
 
 opengalax touchscreen daemon
 
-This is a Linux userland input device driver for touchscreen panels manufactured by [EETI](http://home.eeti.com.tw/web20/eGalaxTouchDriver/linuxDriver.htm): eGalax, eMPIA, TouchKit, Touchmon, HanTouch, etc.
+This is a Linux userland input device driver for touchscreen panels manufactured by [EETI](http://home.eeti.com.tw/web20/eGalaxTouchDriver/linuxDriver.htm): eGalax, eMPIA, TouchKit, Touchmon, HanTouch, D-WAV Scientific Co, eTurboTouch, Faytech, PanJit, 3M MicroTouch EX II, ITM, etc.
 
 The panels can be connected using 3 different interfaces: 
 - USB (Hardware ID: USB\VID_0EEF&PID_0001 or USB\VID_0EEF&PID_0002)
