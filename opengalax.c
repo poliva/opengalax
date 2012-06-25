@@ -354,7 +354,6 @@ int main (int argc, char *argv[]) {
 			continue;
 		}
 
-
 		old_btn1_state = btn1_state;
 		old_btn2_state = btn2_state;
 
@@ -415,20 +414,20 @@ int main (int argc, char *argv[]) {
 		if (btn2_state != old_btn2_state)
 		{
 			if (write(fd_uinput, &ev_button[0], sizeof (struct input_event)) < 0)
-                                die ("error: write");
-                        if (write(fd_uinput, &ev_button[2], sizeof (struct input_event)) < 0)
-                                die ("error: write");
-                        if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
-                                die ("error: write");
+				die ("error: write");
+			if (write(fd_uinput, &ev_button[2], sizeof (struct input_event)) < 0)
+				die ("error: write");
+			if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
+				die ("error: write");
 
 			usleep (10000);
 
-                        if (write(fd_uinput, &ev_button[0], sizeof (struct input_event)) < 0)
-                                die ("error: write");
-                        if (write(fd_uinput, &ev_button[3], sizeof (struct input_event)) < 0)
-                                die ("error: write");
-                        if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
-                                die ("error: write");
+			if (write(fd_uinput, &ev_button[0], sizeof (struct input_event)) < 0)
+				die ("error: write");
+			if (write(fd_uinput, &ev_button[3], sizeof (struct input_event)) < 0)
+				die ("error: write");
+			if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
+				die ("error: write");
 		}
 
 

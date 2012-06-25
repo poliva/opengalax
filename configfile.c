@@ -13,44 +13,43 @@ static const conf_data default_config = {
 };
 
 static const calibration_data default_calibration = {
-        /* xmin */ 0,
-        /* xmax */ 2047,
-        /* ymin */ 0,
-        /* ymax */ 2047,
+	/* xmin */ 0,
+	/* xmax */ 2047,
+	/* ymin */ 0,
+	/* ymax */ 2047,
 };
 
 int create_config_file (char* file) {
-        FILE* fd;
+	FILE* fd;
 
-        fd = fopen(file, "w");
-        if (fd == NULL)
-                return 0;
+	fd = fopen(file, "w");
+	if (fd == NULL)
+		return 0;
 
-        fprintf(fd, "# opengalax configuration file\n");
-        fprintf(fd, "\n#### config data:\n");
-        fprintf(fd, "serial_device=%s\n", default_config.serial_device);
-        fprintf(fd, "uinput_device=%s\n", default_config.uinput_device);
+	fprintf(fd, "# opengalax configuration file\n");
+	fprintf(fd, "\n#### config data:\n");
+	fprintf(fd, "serial_device=%s\n", default_config.serial_device);
+	fprintf(fd, "uinput_device=%s\n", default_config.uinput_device);
 	fprintf(fd, "rightclick_enable=%d\n", default_config.rightclick_enable);
 	fprintf(fd, "rightclick_duration=%d\n", default_config.rightclick_duration);
 	fprintf(fd, "rightclick_range=%d\n", default_config.rightclick_range);
 	fprintf(fd, "# direction: 0 = normal, 1 = invert X, 2 = invert Y, 4 = swap X with Y\n");
 	fprintf(fd, "direction=%d\n", default_config.direction);
-        fprintf(fd, "\n#### calibration data:\n");
+	fprintf(fd, "\n#### calibration data:\n");
 	fprintf(fd, "# - values should range from 0 to 2047\n");
 	fprintf(fd, "# - right/bottom must be bigger than left/top\n");
 	fprintf(fd, "# left edge value:\n");
-        fprintf(fd, "xmin=%d\n", default_calibration.xmin);
+	fprintf(fd, "xmin=%d\n", default_calibration.xmin);
 	fprintf(fd, "# right edge value:\n");
-        fprintf(fd, "xmax=%d\n", default_calibration.xmax);
+	fprintf(fd, "xmax=%d\n", default_calibration.xmax);
 	fprintf(fd, "# top edge value:\n");
-        fprintf(fd, "ymin=%d\n", default_calibration.ymin);
+	fprintf(fd, "ymin=%d\n", default_calibration.ymin);
 	fprintf(fd, "# bottom edge value:\n");
-        fprintf(fd, "ymax=%d\n", default_calibration.ymax);
-        fprintf(fd, "\n");
+	fprintf(fd, "ymax=%d\n", default_calibration.ymax);
+	fprintf(fd, "\n");
 
-
-        fclose(fd);
-        return 1;
+	fclose(fd);
+	return 1;
 }
 
 conf_data config_parse (void) {

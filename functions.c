@@ -117,19 +117,19 @@ void signal_handler (int sig) {
 
 void signal_installer (void) {
 
-        signal(SIGINT, signal_handler);
-        signal(SIGTERM, signal_handler);
-        signal(SIGHUP, signal_handler);
-        signal(SIGQUIT, signal_handler);
-        signal(SIGCHLD, signal_handler);
-        signal(SIGABRT, signal_handler);
+	signal(SIGINT, signal_handler);
+	signal(SIGTERM, signal_handler);
+	signal(SIGHUP, signal_handler);
+	signal(SIGQUIT, signal_handler);
+	signal(SIGCHLD, signal_handler);
+	signal(SIGABRT, signal_handler);
 }
 
 int file_exists (char *file) {
-        struct stat buf;
-        if (stat(file, &buf) == 0)
-                return 1;
-        return 0;
+	struct stat buf;
+	if (stat(file, &buf) == 0)
+		return 1;
+	return 0;
 }
 
 char* default_pid_file (void) {
