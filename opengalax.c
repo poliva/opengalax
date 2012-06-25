@@ -338,6 +338,23 @@ int main (int argc, char *argv[]) {
 				break;
 		}
 
+		if (calibration_mode) {
+			// show calibration values
+			if (x > calib_xmax)
+				calib_xmax=x;
+			if (y > calib_ymax)
+				calib_ymax=y;
+			if (x < calib_xmin && x!=0)
+				calib_xmin=x;
+			if (y < calib_ymin && y!=0)
+				calib_ymin=y;
+			printf("     xmin=%d  xmax=%d  ymin=%d  ymax=%d          \r", calib_xmin, calib_xmax, calib_ymin, calib_ymax);
+			fflush(stdout);
+
+			continue;
+		}
+
+
 		old_btn1_state = btn1_state;
 		old_btn2_state = btn2_state;
 
@@ -425,30 +442,16 @@ int main (int argc, char *argv[]) {
 				die ("error: write");
 		}
 
-		if (!calibration_mode) {
-			// Sync
-			if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
-				die ("error: write");
+		// Sync
+		if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
+			die ("error: write");
 
-			if (foreground)
-				printf ("X: %d Y: %d BTN1: %s BTN2: %s FIRST: %s\n", x, y,
-					btn1_state == 0 ? "OFF" : btn1_state == 1 ? "ON " : "Unknown",
-					btn2_state == 2 ? "OFF" : btn2_state == 3 ? "ON " : "Unknown",
-					first_click == 0 ? "No" : first_click == 1 ? "Yes" : "Unknown");
+		if (foreground)
+			printf ("X: %d Y: %d BTN1: %s BTN2: %s FIRST: %s\n", x, y,
+				btn1_state == 0 ? "OFF" : btn1_state == 1 ? "ON " : "Unknown",
+				btn2_state == 2 ? "OFF" : btn2_state == 3 ? "ON " : "Unknown",
+				first_click == 0 ? "No" : first_click == 1 ? "Yes" : "Unknown");
 
-		} else {
-			// show calibration values
-			if (x > calib_xmax)
-				calib_xmax=x;
-			if (y > calib_ymax)
-				calib_ymax=y;
-			if (x < calib_xmin && x!=0)
-				calib_xmin=x;
-			if (y < calib_ymin && y!=0)
-				calib_ymin=y;
-			printf("     xmin=%d  xmax=%d  ymin=%d  ymax=%d          \r", calib_xmin, calib_xmax, calib_ymin, calib_ymax);
-			fflush(stdout);
-		}
 	}
 
 	if (ioctl (fd_uinput, UI_DEV_DESTROY) < 0)
