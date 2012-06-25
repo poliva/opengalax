@@ -9,10 +9,10 @@ static const conf_data default_config = {
 };
 
 static const calibration_data default_calibration = {
-        /* xmin */ 55,
-        /* xmax */ 1975,
-        /* ymin */ 105,
-        /* ymax */ 1943,
+        /* xmin */ 0,
+        /* xmax */ 2047,
+        /* ymin */ 0,
+        /* ymax */ 2047,
 };
 
 int create_config_file (char* file) {
@@ -23,14 +23,18 @@ int create_config_file (char* file) {
                 return 0;
 
         fprintf(fd, "# opengalax configuration file\n");
-        fprintf(fd, "\n# calibration data:\n");
-        fprintf(fd, "xmin=%d\n", default_calibration.xmin);
-        fprintf(fd, "xmax=%d\n", default_calibration.xmax);
-        fprintf(fd, "ymin=%d\n", default_calibration.ymin);
-        fprintf(fd, "ymax=%d\n", default_calibration.ymax);
-        fprintf(fd, "\n# config data:\n");
+        fprintf(fd, "\n#### config data:\n");
         fprintf(fd, "serial_device=%s\n", default_config.serial_device);
         fprintf(fd, "uinput_device=%s\n", default_config.uinput_device);
+        fprintf(fd, "\n#### calibration data:\n");
+	fprintf(fd, "# left edge value:\n");
+        fprintf(fd, "xmin=%d\n", default_calibration.xmin);
+	fprintf(fd, "# right edge value:\n");
+        fprintf(fd, "xmax=%d\n", default_calibration.xmax);
+	fprintf(fd, "# top edge value:\n");
+        fprintf(fd, "ymin=%d\n", default_calibration.ymin);
+	fprintf(fd, "# bottom edge value:\n");
+        fprintf(fd, "ymax=%d\n", default_calibration.ymax);
         fprintf(fd, "\n");
 
 

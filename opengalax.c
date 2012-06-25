@@ -21,8 +21,8 @@
 #define XB_MAX	0x7F
 #define YB_MAX	0x7F
 
-#define X_AXIS_MAX XA_MAX*XB_MAX
-#define Y_AXIS_MAX YA_MAX*YB_MAX
+#define X_AXIS_MAX (XA_MAX+1)*(XB_MAX+1)
+#define Y_AXIS_MAX (YA_MAX+1)*(YB_MAX+1)
 
 #define PRESS 0x81
 #define RELEASE 0x80
