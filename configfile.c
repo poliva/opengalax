@@ -6,6 +6,9 @@
 static const conf_data default_config = {
 	/* serial_device */ "/dev/serio_raw0",
 	/* uinput_device */ "/dev/uinput",
+	/* rightclick_enable */	1,
+	/* rightclick_duration */ 350,
+	/* rightclick_range */ 10,
 };
 
 static const calibration_data default_calibration = {
@@ -26,7 +29,12 @@ int create_config_file (char* file) {
         fprintf(fd, "\n#### config data:\n");
         fprintf(fd, "serial_device=%s\n", default_config.serial_device);
         fprintf(fd, "uinput_device=%s\n", default_config.uinput_device);
+	fprintf(fd, "rightclick_enable=%d\n", default_config.rightclick_enable);
+	fprintf(fd, "rightclick_duration=%d\n", default_config.rightclick_duration);
+	fprintf(fd, "rightclick_range=%d\n", default_config.rightclick_range);
         fprintf(fd, "\n#### calibration data:\n");
+	fprintf(fd, "# - values should range from 0 to 2047\n");
+	fprintf(fd, "# - right/bottom must be bigger than left/top\n");
 	fprintf(fd, "# left edge value:\n");
         fprintf(fd, "xmin=%d\n", default_calibration.xmin);
 	fprintf(fd, "# right edge value:\n");
@@ -81,6 +89,28 @@ conf_data config_parse (void) {
 			sprintf(config.uinput_device, "%s", temp);
 			memset (temp, 0, sizeof (temp));
 		}
+
+		if ((strncmp ("rightclick_enable=", input, 18)) == 0) {
+			strncpy (temp, input + 18,MAXLEN-1);
+			len=strlen(temp);
+			temp[len+1]='\0';
+			config.rightclick_enable = atoi(temp);
+		}
+
+		if ((strncmp ("rightclick_duration=", input, 20)) == 0) {
+			strncpy (temp, input + 20,MAXLEN-1);
+			len=strlen(temp);
+			temp[len+1]='\0';
+			config.rightclick_duration = atoi(temp);
+		}
+
+		if ((strncmp ("rightclick_range=", input, 17)) == 0) {
+			strncpy (temp, input + 17,MAXLEN-1);
+			len=strlen(temp);
+			temp[len+1]='\0';
+			config.rightclick_range = atoi(temp);
+		}
+
 	}
 
 	fclose(fd);

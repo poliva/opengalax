@@ -27,6 +27,9 @@
 typedef struct {
 	char serial_device[1024];
 	char uinput_device[1024];
+	int rightclick_enable;
+	int rightclick_duration;
+	int rightclick_range;
 } conf_data;
 
 typedef struct {

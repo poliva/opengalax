@@ -83,7 +83,7 @@ int main (int argc, char *argv[]) {
 	int prev_y = 0;
 
 	int btn1_state = 0;
-	int btn2_state = 0;
+	int btn2_state = 2;
 
 	int old_btn1_state = 0;
 	int old_btn2_state = 0;
@@ -166,6 +166,9 @@ int main (int argc, char *argv[]) {
 		printf ("\nConfiguration data:\n");
 		printf ("\tserial_device=%s\n",conf.serial_device);
 		printf ("\tuinput_device=%s\n",conf.uinput_device);
+		printf ("\trightclick_enable=%d\n",conf.rightclick_enable);
+		printf ("\trightclick_duration=%d\n",conf.rightclick_duration);
+		printf ("\trightclick_range=%d\n",conf.rightclick_range);
 		printf ("\nCalibration data:\n");
 		printf ("\txmin=%d\n",calibration.xmin);
 		printf ("\txmax=%d\n",calibration.xmax);
@@ -339,10 +342,13 @@ int main (int argc, char *argv[]) {
 
 
 		// emulate right click by press and hold
-		if (time_elapsed_ms (&tv_start_click, &tv_current, 350)) {
-			if (prev_x == x && prev_y == y) {
-				btn2_state=3;
-				btn1_state=0;
+		if (conf.rightclick_enable) {
+			if (time_elapsed_ms (&tv_start_click, &tv_current, conf.rightclick_duration)) {
+				if ( ( x-(conf.rightclick_range/2) < prev_x && prev_x < x+(conf.rightclick_range/2) ) && 
+				     ( y-(conf.rightclick_range/2) < prev_y && prev_y < y+(conf.rightclick_range/2) ) ) {
+					btn2_state=3;
+					btn1_state=0;
+				}
 			}
 		}
 
