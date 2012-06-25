@@ -394,6 +394,26 @@ int main (int argc, char *argv[]) {
 			}
 		}
 
+		// force button2 transition
+		if (btn2_state != old_btn2_state)
+		{
+			if (write(fd_uinput, &ev_button[0], sizeof (struct input_event)) < 0)
+                                die ("error: write");
+                        if (write(fd_uinput, &ev_button[2], sizeof (struct input_event)) < 0)
+                                die ("error: write");
+                        if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
+                                die ("error: write");
+
+			usleep (10000);
+
+                        if (write(fd_uinput, &ev_button[0], sizeof (struct input_event)) < 0)
+                                die ("error: write");
+                        if (write(fd_uinput, &ev_button[3], sizeof (struct input_event)) < 0)
+                                die ("error: write");
+                        if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
+                                die ("error: write");
+		}
+
 
 		// clicking
 		if (btn1_state != old_btn1_state)
