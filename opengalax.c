@@ -411,7 +411,7 @@ int main (int argc, char *argv[]) {
 			}
 
 			// reset the start click counter
-			if (time_elapsed_ms (&tv_start_click, &tv_current, conf.rightclick_duration*2) && btn2_state == 3) {
+			if (time_elapsed_ms (&tv_start_click, &tv_current, conf.rightclick_duration*2) && btn2_state == 2) {
 				gettimeofday (&tv_start_click, NULL);
 			}
 
