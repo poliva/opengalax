@@ -30,6 +30,7 @@ typedef struct {
 	int rightclick_enable;
 	int rightclick_duration;
 	int rightclick_range;
+	int direction;
 } conf_data;
 
 typedef struct {

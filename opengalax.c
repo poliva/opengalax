@@ -186,6 +186,7 @@ int main (int argc, char *argv[]) {
 		printf ("\trightclick_enable=%d\n",conf.rightclick_enable);
 		printf ("\trightclick_duration=%d\n",conf.rightclick_duration);
 		printf ("\trightclick_range=%d\n",conf.rightclick_range);
+		printf ("\tdirection=%d\n",conf.direction);
 		printf ("\nCalibration data:\n");
 		printf ("\txmin=%d\n",calibration.xmin);
 		printf ("\txmax=%d\n",calibration.xmax);
@@ -320,6 +321,18 @@ int main (int argc, char *argv[]) {
 		x = (xa * XB_MAX) + (xb);
 		y = Y_AXIS_MAX - (ya * YB_MAX) + (YB_MAX - yb);
 
+		switch (conf.direction) {
+			case 1:
+				x = X_AXIS_MAX - x;
+				break;
+			case 2:
+				y = Y_AXIS_MAX - y;
+				break;
+			case 4:
+				x = Y_AXIS_MAX - (ya * YB_MAX) + (YB_MAX - yb);
+				y = (xa * XB_MAX) + (xb);
+				break;
+		}
 
 		old_btn1_state = btn1_state;
 		old_btn2_state = btn2_state;

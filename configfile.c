@@ -9,6 +9,7 @@ static const conf_data default_config = {
 	/* rightclick_enable */	1,
 	/* rightclick_duration */ 350,
 	/* rightclick_range */ 10,
+	/* direction */ 0,
 };
 
 static const calibration_data default_calibration = {
@@ -32,6 +33,8 @@ int create_config_file (char* file) {
 	fprintf(fd, "rightclick_enable=%d\n", default_config.rightclick_enable);
 	fprintf(fd, "rightclick_duration=%d\n", default_config.rightclick_duration);
 	fprintf(fd, "rightclick_range=%d\n", default_config.rightclick_range);
+	fprintf(fd, "# direction: 0 = normal, 1 = invert X, 2 = invert Y, 4 = swap X with Y\n");
+	fprintf(fd, "direction=%d\n", default_config.direction);
         fprintf(fd, "\n#### calibration data:\n");
 	fprintf(fd, "# - values should range from 0 to 2047\n");
 	fprintf(fd, "# - right/bottom must be bigger than left/top\n");
@@ -111,6 +114,12 @@ conf_data config_parse (void) {
 			config.rightclick_range = atoi(temp);
 		}
 
+		if ((strncmp ("direction=", input, 10)) == 0) {
+			strncpy (temp, input + 10,MAXLEN-1);
+			len=strlen(temp);
+			temp[len+1]='\0';
+			config.direction = atoi(temp);
+		}
 	}
 
 	fclose(fd);
