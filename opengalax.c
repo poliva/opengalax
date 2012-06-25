@@ -67,12 +67,12 @@ int init_panel() {
 void usage() {
 	printf("opengalax v%s - (c)2012 Pau Oliva Fora <pof@eslack.org>\n", VERSION);
 	printf("Usage: opengalax [options]\n");
+	printf("	-c                   : calibration mode\n");
 	printf("	-f                   : run in foreground (do not daemonize)\n");
 	printf("	-s <serial-device>   : default=/dev/serio_raw0\n");
 	printf("	-u <uinput-device>   : default=/dev/uinput\n");
 	exit (1);
 }
-
 
 int main (int argc, char *argv[]) {
 
@@ -92,6 +92,12 @@ int main (int argc, char *argv[]) {
 	int foreground = 0;
 	int init_ok=0, i;
 	int opt;
+
+	int calibration_mode=0;
+	int calib_xmin=X_AXIS_MAX;
+	int calib_xmax=0;
+	int calib_ymin=Y_AXIS_MAX;
+	int calib_ymax=0;
 
 	pid_t pid;
 	ssize_t res;
@@ -113,10 +119,13 @@ int main (int argc, char *argv[]) {
 	conf = config_parse();
 	calibration = calibration_parse();
 
-	while ((opt = getopt(argc, argv, "hfs:u:?")) != EOF) {
+	while ((opt = getopt(argc, argv, "chfs:u:?")) != EOF) {
 		switch (opt) {
 			case 'h':
 				usage();
+				break;
+			case 'c':
+				calibration_mode=1;
 				break;
 			case 'f':
 				foreground=1;
@@ -136,6 +145,14 @@ int main (int argc, char *argv[]) {
 	if (!running_as_root()) {
 		fprintf(stderr,"this program must be run as root user\n");
 		exit (-1);
+	}
+
+	if (calibration_mode) {
+		foreground=1;
+		calibration.xmin=0;
+		calibration.xmax=X_AXIS_MAX-1;
+		calibration.ymin=0;
+		calibration.ymax=Y_AXIS_MAX-1;
 	}
 
 	printf("opengalax v%s ", VERSION);
@@ -225,6 +242,12 @@ int main (int argc, char *argv[]) {
 	if (foreground)
 		printf("pannel initialized\n");
 
+	if (calibration_mode) {
+		printf("Move the mouse around the screen to calibrate.\n");
+		printf("When done click Ctrl+C to exit.\n");
+		printf("Remember to edit /etc/opengalax.conf and save your calibration values\n\n");
+	}
+
 	// main bucle
 	while (1) {
 
@@ -251,8 +274,10 @@ int main (int argc, char *argv[]) {
 				die ("error: write");
 
 			// Sync
-			if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
-				die ("error state");
+			if (!calibration_mode) {
+				if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
+					die ("error state");
+			}
 
 			continue;
 		}
@@ -362,12 +387,27 @@ int main (int argc, char *argv[]) {
 			if (write(fd_uinput, &ev_button[btn2_state], sizeof (struct input_event)) < 0)
 				die ("error: write");
 		}
-		// Sync
-		if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
-			die ("error: write");
 
-		if (foreground)
-			printf ("X: %d Y: %d BTN1: %d BTN2: %d FIRST: %d\n", x, y, btn1_state, btn2_state, first_click); 
+		if (!calibration_mode) {
+			// Sync
+			if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
+				die ("error: write");
+
+			if (foreground)
+				printf ("X: %d Y: %d BTN1: %d BTN2: %d FIRST: %d\n", x, y, btn1_state, btn2_state, first_click); 
+		} else {
+			// show calibration values
+			if (x > calib_xmax)
+				calib_xmax=x;
+			if (y > calib_ymax)
+				calib_ymax=y;
+			if (x < calib_xmin && x!=0)
+				calib_xmin=x;
+			if (y < calib_ymin && y!=0)
+				calib_ymin=y;
+			printf("     xmin=%d  xmax=%d  ymin=%d  ymax=%d          \r", calib_xmin, calib_xmax, calib_ymin, calib_ymax);
+			fflush(stdout);
+		}
 	}
 
 	if (ioctl (fd_uinput, UI_DEV_DESTROY) < 0)
