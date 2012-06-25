@@ -411,7 +411,11 @@ int main (int argc, char *argv[]) {
 				die ("error: write");
 
 			if (foreground)
-				printf ("X: %d Y: %d BTN1: %d BTN2: %d FIRST: %d\n", x, y, btn1_state, btn2_state, first_click); 
+				printf ("X: %d Y: %d BTN1: %s BTN2: %s FIRST: %s\n", x, y,
+					btn1_state == 0 ? "OFF" : btn1_state == 1 ? "ON " : "Unknown",
+					btn2_state == 2 ? "OFF" : btn2_state == 3 ? "ON " : "Unknown",
+					first_click == 0 ? "No" : first_click == 1 ? "Yes" : "Unknown");
+
 		} else {
 			// show calibration values
 			if (x > calib_xmax)
