@@ -399,8 +399,9 @@ int main (int argc, char *argv[]) {
 		}
 
 
-		// emulate right click by press and hold
 		if (conf.rightclick_enable) {
+
+			// emulate right click by press and hold
 			if (time_elapsed_ms (&tv_start_click, &tv_current, conf.rightclick_duration)) {
 				if ( ( x-(conf.rightclick_range/2) < prev_x && prev_x < x+(conf.rightclick_range/2) ) && 
 				     ( y-(conf.rightclick_range/2) < prev_y && prev_y < y+(conf.rightclick_range/2) ) ) {
@@ -408,28 +409,38 @@ int main (int argc, char *argv[]) {
 					btn1_state=0;
 				}
 			}
+
+			// reset the start click counter
+			if (time_elapsed_ms (&tv_start_click, &tv_current, conf.rightclick_duration*2) && btn2_state == 3) {
+				gettimeofday (&tv_start_click, NULL);
+			}
+
+			// force button2 transition
+			if (btn2_state != old_btn2_state && btn2_state == 3)
+			{
+				if (write(fd_uinput, &ev_button[0], sizeof (struct input_event)) < 0)
+					die ("error: write");
+				if (write(fd_uinput, &ev_button[2], sizeof (struct input_event)) < 0)
+					die ("error: write");
+				if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
+					die ("error: write");
+				if (foreground)
+					printf ("X: %d Y: %d BTN1: OFF BTN2: OFF FIRST: %s\n", x, y,
+					first_click == 0 ? "No" : first_click == 1 ? "Yes" : "Unknown");
+
+				usleep (10000);
+
+				if (write(fd_uinput, &ev_button[0], sizeof (struct input_event)) < 0)
+					die ("error: write");
+				if (write(fd_uinput, &ev_button[3], sizeof (struct input_event)) < 0)
+					die ("error: write");
+				if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
+					die ("error: write");
+				if (foreground)
+					printf ("X: %d Y: %d BTN1: OFF BTN2: ON  FIRST: %s\n", x, y,
+					first_click == 0 ? "No" : first_click == 1 ? "Yes" : "Unknown");
+			}
 		}
-
-		// force button2 transition
-		if (btn2_state != old_btn2_state)
-		{
-			if (write(fd_uinput, &ev_button[0], sizeof (struct input_event)) < 0)
-				die ("error: write");
-			if (write(fd_uinput, &ev_button[2], sizeof (struct input_event)) < 0)
-				die ("error: write");
-			if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
-				die ("error: write");
-
-			usleep (10000);
-
-			if (write(fd_uinput, &ev_button[0], sizeof (struct input_event)) < 0)
-				die ("error: write");
-			if (write(fd_uinput, &ev_button[3], sizeof (struct input_event)) < 0)
-				die ("error: write");
-			if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
-				die ("error: write");
-		}
-
 
 		// clicking
 		if (btn1_state != old_btn1_state)
