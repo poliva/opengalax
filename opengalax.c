@@ -328,6 +328,10 @@ int main (int argc, char *argv[]) {
 			case 2:
 				y = Y_AXIS_MAX - y;
 				break;
+			case 3:
+				x = X_AXIS_MAX - (xa * XB_MAX) + (XB_MAX - xb);
+				y = (ya * YB_MAX) + (yb);
+				break;
 			case 4:
 				x = Y_AXIS_MAX - (ya * YB_MAX) + (YB_MAX - yb);
 				y = (xa * XB_MAX) + (xb);
