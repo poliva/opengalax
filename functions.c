@@ -181,7 +181,7 @@ int create_pid_file (void) {
 			
 			close(fd);
 
-			if (strstr(buf,"lightum") != NULL) {
+			if (strstr(buf,"opengalax") != NULL) {
 				fprintf (stderr,"Refusing to start as another instance is already running\n");
 				return 0;
 			} else {
