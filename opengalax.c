@@ -268,18 +268,6 @@ int main (int argc, char *argv[]) {
 			btn1_state = 0;
 			btn2_state = 2;
 
-			if (write (fd_uinput, &ev_button[btn1_state], sizeof (struct input_event)) < 0)
-				die ("error: write");
-
-			if (write (fd_uinput, &ev_button[btn2_state], sizeof (struct input_event)) < 0)
-				die ("error: write");
-
-			// Sync
-			if (!calibration_mode) {
-				if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
-					die ("error state");
-			}
-
 			continue;
 		}
 
