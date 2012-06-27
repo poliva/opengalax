@@ -288,6 +288,7 @@ int main (int argc, char *argv[]) {
 		// buffer[0] must be 0x80 (release) or 0x81 (press)
 		do {
 			res = read (fd_serial, &c, sizeof (c));
+			if (c!=RELEASE && c!=PRESS) printf ("ERROR: buffer[0]=%.02X\n", c);
 		} while (c!=RELEASE && c!=PRESS);
 		buffer[0]=c;
 
