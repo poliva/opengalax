@@ -60,6 +60,7 @@ int main (int argc, char *argv[]) {
 	struct input_event ev_sync;
 
 	struct timeval tv_start_click;
+	struct timeval tv_btn2_click;
 	struct timeval tv_current;
 	struct timeval tv;
 
@@ -200,11 +201,8 @@ int main (int argc, char *argv[]) {
 
 		// Use select to use timeout...
 		if (select (fd_serial + 1, &serial, NULL, NULL, &tv) < 1) {
-
-			first_click = 0;
 			btn1_state = BTN1_RELEASE;
 			btn2_state = BTN2_RELEASE;
-
 			continue;
 		}
 
@@ -290,6 +288,7 @@ int main (int argc, char *argv[]) {
 		{
 			first_click = 1;
 			gettimeofday (&tv_start_click, NULL);
+			gettimeofday (&tv_btn2_click, NULL);
 		}
 
 		// load X,Y into input_events
@@ -312,15 +311,15 @@ int main (int argc, char *argv[]) {
 			if (write (fd_uinput, &ev[1], sizeof (struct input_event)) < 0)
 				die ("error: write");
 		} else {
+			// store position for right click management
 			prev_x = x;
 			prev_y = y;
 		}
 
-
 		if (conf.rightclick_enable) {
 
 			// emulate right click by press and hold
-			if (time_elapsed_ms (&tv_start_click, &tv_current, conf.rightclick_duration)) {
+			if (time_elapsed_ms (&tv_btn2_click, &tv_current, conf.rightclick_duration)) {
 				if ( ( x-(conf.rightclick_range/2) < prev_x && prev_x < x+(conf.rightclick_range/2) ) && 
 				     ( y-(conf.rightclick_range/2) < prev_y && prev_y < y+(conf.rightclick_range/2) ) ) {
 					btn2_state=BTN2_PRESS;
@@ -328,9 +327,11 @@ int main (int argc, char *argv[]) {
 				}
 			}
 
-			// reset the start click counter
-			if (time_elapsed_ms (&tv_start_click, &tv_current, conf.rightclick_duration*2) && btn2_state == BTN2_RELEASE) {
-				gettimeofday (&tv_start_click, NULL);
+			// reset the start click counter and store position (allows select text + rightclick)
+			if (time_elapsed_ms (&tv_btn2_click, &tv_current, conf.rightclick_duration*2) && btn2_state == BTN2_RELEASE) {
+				gettimeofday (&tv_btn2_click, NULL);
+				prev_x = x;
+				prev_y = y;
 			}
 
 			// force button2 transition
@@ -380,7 +381,6 @@ int main (int argc, char *argv[]) {
 				btn1_state == BTN1_RELEASE ? "OFF" : btn1_state == BTN1_PRESS ? "ON " : "Unknown",
 				btn2_state == BTN2_RELEASE ? "OFF" : btn2_state == BTN2_PRESS ? "ON " : "Unknown",
 				first_click == 0 ? "No" : first_click == 1 ? "Yes" : "Unknown");
-
 	}
 
 	if (ioctl (fd_uinput, UI_DEV_DESTROY) < 0)
