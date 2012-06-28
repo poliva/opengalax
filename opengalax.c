@@ -29,9 +29,10 @@ void usage() {
 
 int main (int argc, char *argv[]) {
 
-	int x, y;
-	int xa, xb, ya, yb;
+	unsigned char click;
+	unsigned char xa, xb, ya, yb;
 
+	int x, y;
 	int prev_x = 0;
 	int prev_y = 0;
 
@@ -53,9 +54,6 @@ int main (int argc, char *argv[]) {
 
 	pid_t pid;
 	ssize_t res;
-
-	unsigned char c;
-	unsigned char buffer[5];
 
 	struct input_event ev[2];
 	struct input_event ev_button[4];
@@ -204,50 +202,38 @@ int main (int argc, char *argv[]) {
 		if (select (fd_serial + 1, &serial, NULL, NULL, &tv) < 1) {
 
 			first_click = 0;
-			btn1_state = 0;
-			btn2_state = 2;
+			btn1_state = BTN1_RELEASE;
+			btn2_state = BTN2_RELEASE;
 
 			continue;
 		}
 
-		memset (buffer, 0, sizeof (buffer));
-
-		// buffer[0] must be 0x80 (release) or 0x81 (press)
+		// click must be 0x80 (release) or 0x81 (press)
 		do {
-			res = read (fd_serial, &c, sizeof (c));
-			if (c!=RELEASE && c!=PRESS) printf ("ERROR: buffer[0]=%.02X\n", c);
-		} while (c!=RELEASE && c!=PRESS);
-		buffer[0]=c;
+			res = read (fd_serial, &click, sizeof (click));
+			if (click!=RELEASE && click!=PRESS) printf ("ERROR: click=%.02X\n", click);
+		} while (click!=RELEASE && click!=PRESS);
 
-		res = read (fd_serial, &c, sizeof (c));
-		if (c > XA_MAX) printf ("ERROR: buffer[1]=%.02X\n", c);		
-		buffer[1]=c;
+		res = read (fd_serial, &xa, sizeof (xa));
+		if (xa > XA_MAX) printf ("ERROR: xa=%.02X\n", xa);
 
-		res = read (fd_serial, &c, sizeof (c));
-		if (c > XB_MAX) printf ("ERROR: buffer[2]=%.02X\n", c);		
-		buffer[2]=c;
+		res = read (fd_serial, &xb, sizeof (xb));
+		if (xb > XB_MAX) printf ("ERROR: xb=%.02X\n", xb);
 
-		res = read (fd_serial, &c, sizeof (c));
-		if (c > YA_MAX) printf ("ERROR: buffer[3]=%.02X\n", c);		
-		buffer[3]=c;
+		res = read (fd_serial, &ya, sizeof (ya));
+		if (ya > YA_MAX) printf ("ERROR: ya=%.02X\n", ya);
 
-		res = read (fd_serial, &c, sizeof (c));
-		if (c > YB_MAX) printf ("ERROR: buffer[4]=%.02X\n", c);		
-		buffer[4]=c;
+		res = read (fd_serial, &yb, sizeof (yb));
+		if (yb > YB_MAX) printf ("ERROR: yb=%.02X\n", yb);
 
 		if (res < 0)
 			die ("error reading from serial port");
 
 		if (DEBUG)
-			fprintf (stderr,"PDU: %.2X %.2X %.2X %.2X %.2X\n", buffer[0], buffer[1], buffer[2], buffer[3], buffer[4]);
+			fprintf (stderr,"PDU: %.2X %.2X %.2X %.2X %.2X\n", click, xa, xb, ya, yb);
 
-		xa=(int)(buffer[1]);
-		ya=(int)(buffer[3]);
-		xb=(int)(buffer[2]);
-		yb=(int)(buffer[4]);
-
-		x = (xa * XB_MAX) + (xb);
-		y = Y_AXIS_MAX - (ya * YB_MAX) + (YB_MAX - yb);
+		x = ((int)xa * XB_MAX) + ((int)xb);
+		y = Y_AXIS_MAX - ((int)ya * YB_MAX) + (YB_MAX - (int)yb);
 
 		switch (conf.direction) {
 			case 1:
@@ -257,12 +243,12 @@ int main (int argc, char *argv[]) {
 				y = Y_AXIS_MAX - y;
 				break;
 			case 3:
-				x = X_AXIS_MAX - (xa * XB_MAX) + (XB_MAX - xb);
-				y = (ya * YB_MAX) + (yb);
+				x = X_AXIS_MAX - ((int)xa * XB_MAX) + (XB_MAX - (int)xb);
+				y = ((int)ya * YB_MAX) + ((int)yb);
 				break;
 			case 4:
-				x = Y_AXIS_MAX - (ya * YB_MAX) + (YB_MAX - yb);
-				y = (xa * XB_MAX) + (xb);
+				x = Y_AXIS_MAX - ((int)ya * YB_MAX) + (YB_MAX - (int)yb);
+				y = ((int)xa * XB_MAX) + ((int)xb);
 				break;
 		}
 
@@ -285,7 +271,7 @@ int main (int argc, char *argv[]) {
 		old_btn1_state = btn1_state;
 		old_btn2_state = btn2_state;
 
-		if (buffer[0] == PRESS) {
+		if (click == PRESS) {
 			if (btn2_state != BTN2_PRESS) 
 				btn1_state = BTN1_RELEASE;
 		} else {
