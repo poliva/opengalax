@@ -271,25 +271,29 @@ int main (int argc, char *argv[]) {
 		old_btn1_state = btn1_state;
 		old_btn2_state = btn2_state;
 
-		if (click == PRESS) {
-			if (btn2_state != BTN2_PRESS) 
+		switch (click) {
+			case PRESS:
+				if (old_btn1_state == BTN1_RELEASE && old_btn2_state == BTN2_RELEASE) {
+					btn1_state = BTN1_PRESS;
+					btn2_state = BTN2_RELEASE;
+				}
+				break;
+			case RELEASE:
 				btn1_state = BTN1_RELEASE;
-		} else {
-			btn1_state = BTN1_RELEASE;
-			btn2_state = BTN2_PRESS;
+				btn2_state = BTN2_RELEASE;
+				break;
 		}
 
 		// If this is the first panel event, track time for no-drag timer
-		if (btn1_state != old_btn1_state && btn1_state == BTN1_PRESS)
+		first_click = 0;
+		if (old_btn1_state == BTN1_RELEASE && btn1_state == BTN1_PRESS)
 		{
 			first_click = 1;
 			gettimeofday (&tv_start_click, NULL);
 		}
-		else
-			first_click = 0;
 
 		// load X,Y into input_events
-		memset (ev, 0, sizeof (ev));	//resets object
+		memset (ev, 0, sizeof (ev));
 		ev[0].type = EV_ABS;
 		ev[0].code = ABS_X;
 		ev[0].value = x;
@@ -297,16 +301,16 @@ int main (int argc, char *argv[]) {
 		ev[1].code = ABS_Y;
 		ev[1].value = y;
 
-		// send X,Y
 		gettimeofday (&tv_current, NULL);
+
 		// Only move to posision of click for first while - prevents accidental dragging.
 		if (time_elapsed_ms (&tv_start_click, &tv_current, 200) || first_click)
 		{
+			// send X,Y
 			if (write (fd_uinput, &ev[0], sizeof (struct input_event)) < 0)
 				die ("error: write");
 			if (write (fd_uinput, &ev[1], sizeof (struct input_event)) < 0)
 				die ("error: write");
-
 		} else {
 			prev_x = x;
 			prev_y = y;
@@ -330,7 +334,7 @@ int main (int argc, char *argv[]) {
 			}
 
 			// force button2 transition
-			if (btn2_state != old_btn2_state && btn2_state == BTN2_PRESS)
+			if (old_btn2_state == BTN2_RELEASE && btn2_state == BTN2_PRESS)
 			{
 				if (write(fd_uinput, &ev_button[BTN1_RELEASE], sizeof (struct input_event)) < 0)
 					die ("error: write");
@@ -354,17 +358,18 @@ int main (int argc, char *argv[]) {
 					printf ("X: %d Y: %d BTN1: OFF BTN2: ON  FIRST: %s\n", x, y,
 					first_click == 0 ? "No" : first_click == 1 ? "Yes" : "Unknown");
 			}
+
+			// clicking button2
+			if (btn2_state != old_btn2_state) 
+				if (write(fd_uinput, &ev_button[btn2_state], sizeof (struct input_event)) < 0)
+					die ("error: write");
+
 		}
 
-		// clicking
+		// clicking button1
 		if (btn1_state != old_btn1_state)
-		{
 			if (write(fd_uinput, &ev_button[btn1_state], sizeof (struct input_event)) < 0)
 				die ("error: write");
-
-			if (write(fd_uinput, &ev_button[btn2_state], sizeof (struct input_event)) < 0)
-				die ("error: write");
-		}
 
 		// Sync
 		if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
