@@ -6,7 +6,7 @@
 
 case "${1}" in
         resume|thaw)
-		kill $(pidof opengalax) && /usr/bin/opengalax
+		kill -USR1 $(pidof opengalax)
 		echo "`/bin/date` -- bringing touchscreen up"
         ;;
 esac

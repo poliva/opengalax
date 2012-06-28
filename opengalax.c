@@ -15,54 +15,7 @@
 
 #include "opengalax.h"
 
-#define XA_MAX 0xF
-#define YA_MAX 0xF
-
-#define XB_MAX	0x7F
-#define YB_MAX	0x7F
-
-#define X_AXIS_MAX (XA_MAX+1)*(XB_MAX+1)
-#define Y_AXIS_MAX (YA_MAX+1)*(YB_MAX+1)
-
-#define PRESS 0x81
-#define RELEASE 0x80
-
-#define CMD_OK 0xFA
-#define CMD_ERR 0xFE
-
-#define DEBUG 0
-
 #define VERSION "0.2"
-
-int init_panel() {
-
-	int i;
-	unsigned char r;
-	ssize_t res;
-	unsigned char init_seq[8] = { 0xf5, 0xf3, 0x0a, 0xf3, 0x64, 0xf3, 0xc8, 0xf4 };
-	int ret=1;
-
-	for (i=0;i<8;i++) {
-
-		usleep (10000);
-		res = write (fd_serial, &init_seq[i], 1);
-		res = read (fd_serial, &r, 1);
-
-		if (res < 0)
-			die ("error reading from serial port");
-
-		if (DEBUG)
-			printf ("SENT: %.02X READ: %.02X\n", init_seq[i], r);
-
-		if (r != CMD_OK ) {
-			fprintf (stderr,"panel initialization failed: 0x%.02X != 0x%.02X\n", r, CMD_OK);
-			ret=0;
-		}
-
-	}
-
-	return ret;
-}
 
 void usage() {
 	printf("opengalax v%s - (c)2012 Pau Oliva Fora <pof@eslack.org>\n", VERSION);
@@ -90,7 +43,6 @@ int main (int argc, char *argv[]) {
 	int first_click = 0;
 
 	int foreground = 0;
-	int init_ok=0, i;
 	int opt;
 
 	int calibration_mode=0;
@@ -225,20 +177,7 @@ int main (int argc, char *argv[]) {
 	ev_button[3].value = 1;
 
 	// panel initialization
-	for (i=0; i<10; i++) {
-		if (init_ok)
-			break;
-		init_ok = init_panel();
-	}
-
-	if (!init_ok) {
-		fprintf(stderr, "error: failed to initialize panel\n");
-		remove_pid_file();
-		if (ioctl (fd_uinput, UI_DEV_DESTROY) < 0)
-			die ("error: ioctl");
-		close (fd_uinput);
-		exit (-1);
-	}
+	initialize_panel(0);
 
 	if (foreground)
 		printf("pannel initialized\n");

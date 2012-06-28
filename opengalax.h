@@ -18,6 +18,23 @@
 #include <linux/uinput.h>
 #include <sys/stat.h>
 
+#define XA_MAX 0xF
+#define YA_MAX 0xF
+
+#define XB_MAX	0x7F
+#define YB_MAX	0x7F
+
+#define X_AXIS_MAX (XA_MAX+1)*(XB_MAX+1)
+#define Y_AXIS_MAX (YA_MAX+1)*(YB_MAX+1)
+
+#define PRESS 0x81
+#define RELEASE 0x80
+
+#define CMD_OK 0xFA
+#define CMD_ERR 0xFE
+
+#define DEBUG 0
+
 #define die(str, args...) do { \
 	perror(str); \
 	exit(EXIT_FAILURE); \
@@ -55,6 +72,8 @@ int configure_uinput (void);
 int setup_uinput (void);
 int setup_uinput_dev (const char *ui_dev);
 int open_serial_port (const char *fd_device); 
+int init_panel (); 
+void initialize_panel (int sig);
 void signal_handler (int sig);
 void signal_installer (void);
 int file_exists (char *file);

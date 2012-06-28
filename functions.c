@@ -101,6 +101,58 @@ int open_serial_port (const char *fd_device) {
 	return 0;
 }
 
+int init_panel (void) {
+
+	int i;
+	unsigned char r;
+	ssize_t res;
+	unsigned char init_seq[8] = { 0xf5, 0xf3, 0x0a, 0xf3, 0x64, 0xf3, 0xc8, 0xf4 };
+	int ret=1;
+
+	for (i=0;i<8;i++) {
+
+		usleep (10000);
+		res = write (fd_serial, &init_seq[i], 1);
+		res = read (fd_serial, &r, 1);
+
+		if (res < 0)
+			die ("error reading from serial port");
+
+		if (DEBUG)
+			printf ("SENT: %.02X READ: %.02X\n", init_seq[i], r);
+
+		if (r != CMD_OK ) {
+			fprintf (stderr,"panel initialization failed: 0x%.02X != 0x%.02X\n", r, CMD_OK);
+			ret=0;
+		}
+
+	}
+
+	return ret;
+}
+
+void initialize_panel (int sig) {
+
+	(void) sig;
+	int init_ok=0, i;
+
+	// panel initialization
+	for (i=0; i<10; i++) {
+		if (init_ok)
+			break;
+		init_ok = init_panel();
+	}
+
+	if (!init_ok) {
+		fprintf(stderr, "error: failed to initialize panel\n");
+		remove_pid_file();
+		if (ioctl (fd_uinput, UI_DEV_DESTROY) < 0)
+			die ("error: ioctl");
+		close (fd_uinput);
+		exit (-1);
+	}
+}
+
 void signal_handler (int sig) {
 
         (void) sig;
@@ -123,6 +175,7 @@ void signal_installer (void) {
 	signal(SIGQUIT, signal_handler);
 	signal(SIGCHLD, signal_handler);
 	signal(SIGABRT, signal_handler);
+	signal(SIGUSR1, initialize_panel);
 }
 
 int file_exists (char *file) {
