@@ -1,5 +1,5 @@
 /*
- *   opengalax PS2 touchscreen daemon
+ *   opengalax touchscreen daemon
  *   Copyright 2012 Pau Oliva Fora <pof@eslack.org>
  *
  *   This program is free software; you can redistribute it and/or
