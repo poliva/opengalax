@@ -27,11 +27,16 @@
 #define X_AXIS_MAX (XA_MAX+1)*(XB_MAX+1)
 #define Y_AXIS_MAX (YA_MAX+1)*(YB_MAX+1)
 
+#define CMD_OK 0xFA
+#define CMD_ERR 0xFE
+
 #define PRESS 0x81
 #define RELEASE 0x80
 
-#define CMD_OK 0xFA
-#define CMD_ERR 0xFE
+#define BTN1_RELEASE 0
+#define BTN1_PRESS 1
+#define BTN2_RELEASE 2
+#define BTN2_PRESS 3
 
 #define DEBUG 0
 
