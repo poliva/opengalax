@@ -361,16 +361,13 @@ int main (int argc, char *argv[]) {
 			}
 
 			// clicking button2
-			if (btn2_state != old_btn2_state) 
-				if (write(fd_uinput, &ev_button[btn2_state], sizeof (struct input_event)) < 0)
-					die ("error: write");
-
+			if (write(fd_uinput, &ev_button[btn2_state], sizeof (struct input_event)) < 0)
+				die ("error: write");
 		}
 
 		// clicking button1
-		if (btn1_state != old_btn1_state)
-			if (write(fd_uinput, &ev_button[btn1_state], sizeof (struct input_event)) < 0)
-				die ("error: write");
+		if (write(fd_uinput, &ev_button[btn1_state], sizeof (struct input_event)) < 0)
+			die ("error: write");
 
 		// Sync
 		if (write (fd_uinput, &ev_sync, sizeof (struct input_event)) < 0)
