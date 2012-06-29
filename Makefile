@@ -26,6 +26,8 @@ install: all
 	$(INSTALLDATA) $(srcdir)/LICENSE $(docdir)/$(BIN)/
 	mkdir -p /etc/pm/sleep.d/
 	$(INSTALL) $(srcdir)/75_opengalax /etc/pm/sleep.d/
+	mkdir -p /etc/X11/xorg.conf.d/
+	$(INSTALLDATA) $(srcdir)/10-opengalax.conf /etc/X11/xorg.conf.d/
 #	mkdir -p $(mandir)/man1/
 #	$(INSTALLDATA) $(srcdir)/$(BIN).1 $(mandir)/man1/
 
