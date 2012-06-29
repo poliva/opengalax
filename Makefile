@@ -28,13 +28,20 @@ install: all
 	$(INSTALL) $(srcdir)/75_opengalax /etc/pm/sleep.d/
 	mkdir -p /etc/X11/xorg.conf.d/
 	$(INSTALLDATA) $(srcdir)/10-opengalax.conf /etc/X11/xorg.conf.d/
+	mkdir -p /etc/init.d/
+	$(INSTALL) $(srcdir)/$(BIN)-init /etc/init.d/$(BIN)
+	/usr/sbin/update-rc.d $(BIN) defaults
 #	mkdir -p $(mandir)/man1/
 #	$(INSTALLDATA) $(srcdir)/$(BIN).1 $(mandir)/man1/
 
 uninstall:
 	rm -rf $(bindir)/$(BIN)
 	rm -rf $(docdir)/$(BIN)/
-	rm -rf $(mandir)/man1/$(BIN).1
+	rm -rf /etc/pm/sleep.d/75_opengalax
+	rm -rf /etc/X11/xorg.conf.d/10-opengalax.conf
+	/usr/sbin/update-rc.d -f $(BIN) remove
+	rm -rf /etc/init.d/$(BIN)
+	#rm -rf $(mandir)/man1/$(BIN).1
 
 clean:
 	rm -f $(BIN) *.o
