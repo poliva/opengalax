@@ -138,6 +138,7 @@ int main (int argc, char *argv[]) {
 		printf ("\trightclick_duration=%d\n",conf.rightclick_duration);
 		printf ("\trightclick_range=%d\n",conf.rightclick_range);
 		printf ("\tdirection=%d\n",conf.direction);
+		printf ("\tpsmouse=%d\n",conf.psmouse);
 		printf ("\nCalibration data:\n");
 		printf ("\txmin=%d\n",calibration.xmin);
 		printf ("\txmax=%d\n",calibration.xmax);
@@ -187,6 +188,17 @@ int main (int argc, char *argv[]) {
 		printf("Remember to edit /etc/opengalax.conf and save your calibration values\n\n");
 	}
 
+	if (conf.psmouse) {
+		uinput_open(conf.uinput_device);
+
+		if (psmouse_connect() != 0) {
+			fprintf(stderr, "cannot connect to device\n");
+			return 1;
+		}
+
+		uinput_create();
+	}
+
 	// main bucle
 	while (1) {
 
@@ -208,8 +220,14 @@ int main (int argc, char *argv[]) {
 
 		// click must be 0x80 (release) or 0x81 (press)
 		do {
+
 			res = read (fd_serial, &click, sizeof (click));
-			if (click!=RELEASE && click!=PRESS) printf ("ERROR: click=%.02X\n", click);
+			if (click!=RELEASE && click!=PRESS) {
+				if (conf.psmouse) 
+					psmouse_interrupt(click);
+				else
+					printf ("ERROR: click=%.02X\n", click);
+			}
 		} while (click!=RELEASE && click!=PRESS);
 
 		res = read (fd_serial, &xa, sizeof (xa));

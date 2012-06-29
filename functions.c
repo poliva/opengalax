@@ -163,7 +163,6 @@ void signal_handler (int sig) {
 		die ("error: ioctl");
 
 	close (fd_uinput);
-        printf("\nKilled!\n");
         exit(1);
 }
 

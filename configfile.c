@@ -17,10 +17,11 @@
 static const conf_data default_config = {
 	/* serial_device */ "/dev/serio_raw0",
 	/* uinput_device */ "/dev/uinput",
-	/* rightclick_enable */	1,
+	/* rightclick_enable */	0,
 	/* rightclick_duration */ 350,
 	/* rightclick_range */ 10,
 	/* direction */ 0,
+	/* psmouse */ 0,
 };
 
 static const calibration_data default_calibration = {
@@ -46,6 +47,9 @@ int create_config_file (char* file) {
 	fprintf(fd, "rightclick_range=%d\n", default_config.rightclick_range);
 	fprintf(fd, "# direction: 0 = normal, 1 = invert X, 2 = invert Y, 4 = swap X with Y\n");
 	fprintf(fd, "direction=%d\n", default_config.direction);
+	fprintf(fd, "# set psmouse=1 if you have a mouse connected into the same port\n");
+	fprintf(fd, "# this usually requires i8042.nomux=1 and i8042.reset kernel parameters\n");
+	fprintf(fd, "psmouse=%d\n", default_config.psmouse);
 	fprintf(fd, "\n#### calibration data:\n");
 	fprintf(fd, "# - values should range from 0 to 2047\n");
 	fprintf(fd, "# - right/bottom must be bigger than left/top\n");
@@ -129,6 +133,13 @@ conf_data config_parse (void) {
 			len=strlen(temp);
 			temp[len+1]='\0';
 			config.direction = atoi(temp);
+		}
+
+		if ((strncmp ("psmouse=", input, 8)) == 0) {
+			strncpy (temp, input + 8,MAXLEN-1);
+			len=strlen(temp);
+			temp[len+1]='\0';
+			config.psmouse = atoi(temp);
 		}
 	}
 

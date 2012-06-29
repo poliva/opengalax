@@ -53,6 +53,7 @@ typedef struct {
 	int rightclick_duration;
 	int rightclick_range;
 	int direction;
+	int psmouse;
 } conf_data;
 
 typedef struct {
@@ -85,6 +86,15 @@ int file_exists (char *file);
 char* default_pid_file (void); 
 int create_pid_file (void); 
 int remove_pid_file (void);
+
+/* psmouse.c */
+
+void uinput_open(const char *uinput_dev_name); 
+int psmouse_connect();
+void uinput_create(); 
+int phys_wait_for_input(int *ptimeout); 
+void psmouse_interrupt(unsigned char data);
+
 
 /*
 

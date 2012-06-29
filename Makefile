@@ -12,7 +12,7 @@ bindir = $(prefix)/usr/bin
 docdir = $(prefix)/usr/share/doc
 mandir = $(prefix)/usr/share/man
 
-OBJ=functions.o configfile.o opengalax.o
+OBJ=functions.o configfile.o psmouse.o opengalax.o
 BIN=opengalax
 
 all: ${OBJ}
