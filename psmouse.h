@@ -26,8 +26,8 @@ struct psmouse;
 
 struct psmouse {
 	void *private;
-	char *vendor;
-	char *name;
+	const char *vendor;
+	const char *name;
 	unsigned char cmdbuf[8];
 	unsigned char packet[8];
 	unsigned char cmdcnt;
