@@ -73,7 +73,6 @@ void uinput_set_relbit(int bit) {
 }
 
 
-static const char* phys_filename;
 void uinput_create() {
 	struct uinput_user_dev uinput = {
 		.name = "psmouse ",
@@ -81,7 +80,7 @@ void uinput_create() {
 	int r;
 
 	snprintf(uinput.name, UINPUT_MAX_NAME_SIZE,
-		 "psmouse %s", phys_filename);
+		 "opengalax-psmouse");
 
 	r = write(psmouse_uinput_fd, &uinput, sizeof(uinput));
 	if (r==-1) { pferrx(); }
@@ -119,9 +118,6 @@ void uinput_event(__u16 type, __u16 code, __s32 value) {
 
 
 /********** functions for accessing the raw keyboard device **********/
-
-//static int fd_serial = -1;
-static const char* phys_filename;
 
 static int phys_write(unsigned char byte) {
 	int r;
@@ -264,7 +260,6 @@ void psmouse_interrupt(unsigned char data)
 			}
 		}
 	}
-
 
 	if (psmouse->pktcnt == 3 + (psmouse->type >= PSMOUSE_GENPS)) {
 		psmouse_process_packet();
@@ -428,13 +423,6 @@ static void psmouse_set_resolution()
 {
 	unsigned char param[1];
 
-#if 0
-	if (psmouse->type == PSMOUSE_PS2PP && psmouse_resolution > 400) {
-		ps2pp_set_800dpi(psmouse);
-		return;
-	}
-#endif
-
 	if (!psmouse_resolution || psmouse_resolution >= 200)
 		param[0] = 3;
 	else if (psmouse_resolution >= 100)
@@ -530,6 +518,8 @@ static void psmouse_disconnect()
  */
 int psmouse_connect()
 {
+
+	int probe_ok=0, i;
 	memset(psmouse, 0, sizeof(struct psmouse));
 
 	uinput_set_evbit(EV_KEY);
@@ -544,15 +534,16 @@ int psmouse_connect()
 
 	psmouse->state = PSMOUSE_CMD_MODE;
 
-/*
-	if (phys_open()) {
-		return -1;
+	for (i=0;i<100;i++) {
+		if (DEBUG) printf("probing mouse\n");
+		if (probe_ok==1) 
+			break;
+		probe_ok = psmouse_probe();
+		if (DEBUG) printf("probe=%d\n",probe_ok);
 	}
-*/
 
-	if (psmouse_probe() <= 0) {
+	if (probe_ok <= 0)
 		return -1;
-	}
 
 	sprintf(psmouse->devname, "%s %s %s",
 		psmouse_protocols[psmouse->type], psmouse->vendor, psmouse->name);
