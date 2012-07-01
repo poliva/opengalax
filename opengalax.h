@@ -65,6 +65,7 @@ typedef struct {
 
 int fd_serial, fd_uinput;
 struct uinput_user_dev uidev;
+int use_psmouse;
 
 /* configfile.c */
 int create_config_file (char* file);
@@ -94,6 +95,9 @@ int psmouse_connect();
 void uinput_create(); 
 int phys_wait_for_input(int *ptimeout); 
 void psmouse_interrupt(unsigned char data);
+void uinput_destroy();
+void uinput_close();
+void psmouse_disconnect();
 
 
 /*

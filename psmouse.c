@@ -89,14 +89,14 @@ void uinput_create() {
 	if (r==-1) { pferrx(); }
 }
 
-static void uinput_destroy() {
+void uinput_destroy() {
 	int r;
 
 	r = ioctl(psmouse_uinput_fd, UI_DEV_DESTROY);
 	if (r==-1) { pferrx(); }
 }
 
-static void uinput_close() {
+void uinput_close() {
 	int r;
 
 	r = close(psmouse_uinput_fd);
@@ -155,8 +155,6 @@ int phys_wait_for_input(int *ptimeout) {
 	return 0;
 }
 
-int psmouse_connect();
-static void psmouse_disconnect();
 static int psmouse_reconnect();
 
 static void phys_rescan() {
@@ -485,24 +483,11 @@ static void psmouse_activate()
 	psmouse->state = PSMOUSE_ACTIVATED;
 }
 
-#if 0
-/*
- * psmouse_cleanup() resets the mouse into power-on state.
- */
-
-static void psmouse_cleanup(struct serio *serio)
-{
-	struct psmouse *psmouse = serio->private;
-
-	psmouse_reset(psmouse);
-}
-#endif
-
 /*
  * psmouse_disconnect() closes and frees.
  */
 
-static void psmouse_disconnect()
+void psmouse_disconnect()
 {
 	psmouse->state = PSMOUSE_CMD_MODE;
 
@@ -579,9 +564,3 @@ static int psmouse_reconnect()
 	psmouse_activate();
 	return 0;
 }
-
-#if 0
-	uinput_destroy();
-	psmouse_disconnect();
-	uinput_close();
-#endif

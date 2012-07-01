@@ -149,6 +149,7 @@ void initialize_panel (int sig) {
 		if (ioctl (fd_uinput, UI_DEV_DESTROY) < 0)
 			die ("error: ioctl");
 		close (fd_uinput);
+		close(fd_serial);
 		exit (-1);
 	}
 }
@@ -163,6 +164,15 @@ void signal_handler (int sig) {
 		die ("error: ioctl");
 
 	close (fd_uinput);
+
+	if (use_psmouse) {
+		uinput_destroy();
+		psmouse_disconnect();
+		uinput_close();
+	}
+
+	close(fd_serial);
+
         exit(1);
 }
 

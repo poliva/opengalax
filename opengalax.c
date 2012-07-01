@@ -188,7 +188,9 @@ int main (int argc, char *argv[]) {
 		printf("Remember to edit /etc/opengalax.conf and save your calibration values\n\n");
 	}
 
+	use_psmouse=0;
 	if (conf.psmouse) {
+		use_psmouse = 1;
 		uinput_open(conf.uinput_device);
 
 		if (psmouse_connect() != 0) {
@@ -397,11 +399,6 @@ int main (int argc, char *argv[]) {
 				btn2_state == BTN2_RELEASE ? "OFF" : btn2_state == BTN2_PRESS ? "ON " : "Unknown",
 				first_click == 0 ? "No" : first_click == 1 ? "Yes" : "Unknown");
 	}
-
-	if (ioctl (fd_uinput, UI_DEV_DESTROY) < 0)
-		die ("error: ioctl");
-
-	close (fd_uinput);
 
 	return 0;
 }
