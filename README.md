@@ -73,3 +73,11 @@ Usage in Xorg
 Opengalax will configure evdev xorg driver to handle right click emulation by default, so you don't need
 to enable right click emulation in the configuration file. If for some reason you do not want to use evdev,
 opengalax can handle the right click emulation itself by enabling it in the configuration file.
+
+Ubuntu packages
+---------------
+Official Ubuntu packages are available in [poliva/opengalax ppa](https://launchpad.net/~poliva/+archive/opengalax):
+
+     sudo add-apt-repository ppa:poliva/opengalax
+     sudo apt-get update
+     sudo apt-get install opengalax
