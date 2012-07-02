@@ -15,7 +15,7 @@
 
 #include "opengalax.h"
 
-#define VERSION "0.3"
+#define VERSION "0.4"
 
 void usage() {
 	printf("opengalax v%s - (c)2012 Pau Oliva Fora <pof@eslack.org>\n", VERSION);
