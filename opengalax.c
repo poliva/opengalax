@@ -147,7 +147,14 @@ int main (int argc, char *argv[]) {
 	}
 
 	// Open serial port
-	open_serial_port (conf.serial_device);
+	if (file_exists(conf.serial_device)) {
+		open_serial_port (conf.serial_device);
+	} else {
+		printf("Serial device %s does not exist\n", conf.serial_device);
+		printf("Please configure /etc/opengalax.conf and start the daemon again\n");
+		// keep the daemon running, but do nothing
+		while(1);
+	}
 
 	// configure uinput
 	setup_uinput_dev(conf.uinput_device);
