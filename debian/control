@@ -14,6 +14,6 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: xserver-xorg-input-evdev
 Suggests: xinput-calibrator
-Description: opengalax touchscreen daemon
+Description: touchscreen daemon for EETI controllers
  Userland input device driver for touchscreen panels manufactured by EETI
  (eGalax, eMPIA, TouchKit, TouchMon, eGTouch, D-WAV Scientific Co, etc...)
