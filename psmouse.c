@@ -79,8 +79,7 @@ void uinput_create() {
 	};
 	int r;
 
-	snprintf(uinput.name, UINPUT_MAX_NAME_SIZE,
-		 "opengalax-psmouse");
+	snprintf(uinput.name, UINPUT_MAX_NAME_SIZE, "psmouse");
 
 	r = write(psmouse_uinput_fd, &uinput, sizeof(uinput));
 	if (r==-1) { pferrx(); }
