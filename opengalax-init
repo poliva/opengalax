@@ -34,13 +34,15 @@ SCRIPTNAME=/etc/init.d/$NAME
 # and status_of_proc is working.
 . /lib/lsb/init-functions
 
+VERBOSE="yes"
+
 #
 # Function that starts the daemon/service
 #
 do_start()
 {
 	# if the driver is psmouse, change it to serio_raw
-	SERIO=$(/bin/ls -l /sys/bus/serio/devices/serio*/driver |grep psmouse |grep -o "serio./driver" |cut -f 1 -d "/")
+	SERIO=$(/bin/ls -l /sys/bus/serio/devices/serio*/driver 2>/dev/null |grep psmouse |grep -o "serio./driver" |cut -f 1 -d "/")
 	if [ ! -z $SERIO ]; then
 		echo -n serio_raw >/sys/bus/serio/devices/${SERIO}/drvctl
 	fi
