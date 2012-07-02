@@ -1,0 +1,19 @@
+Source: opengalax
+Section: misc
+Priority: optional
+Maintainer: Pau Oliva Fora (pof) <pau@eslack.org>
+Build-Depends: debhelper (>= 8.0.0),
+ autotools-dev
+Standards-Version: 3.9.3
+Homepage: https://github.com/poliva/opengalax
+Vcs-Git: git://github.com/poliva/opengalax.git
+Vcs-Browser: https://github.com/poliva/opengalax
+
+Package: opengalax
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: xserver-xorg-input-evdev
+Suggests: xinput-calibrator
+Description: opengalax touchscreen daemon
+ Userland input device driver for touchscreen panels manufactured by EETI
+ (eGalax, eMPIA, TouchKit, TouchMon, eGTouch, D-WAV Scientific Co, etc...)
