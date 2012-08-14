@@ -275,6 +275,11 @@ int main (int argc, char *argv[]) {
 				x = Y_AXIS_MAX - ((int)ya * YB_MAX) + (YB_MAX - (int)yb);
 				y = ((int)xa * XB_MAX) + ((int)xb);
 				break;
+			case 5:
+				x = ((int)ya * YB_MAX) + ((int)yb);
+				y = ((int)xa * XB_MAX) + ((int)xb);
+				break;
+
 		}
 
 		if (calibration_mode) {
