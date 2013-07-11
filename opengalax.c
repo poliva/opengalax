@@ -279,6 +279,13 @@ int main (int argc, char *argv[]) {
 				x = ((int)ya * YB_MAX) + ((int)yb);
 				y = ((int)xa * XB_MAX) + ((int)xb);
 				break;
+			case 6:
+				x = Y_AXIS_MAX - ((int)ya * YB_MAX) + (YB_MAX - (int)yb);
+				y = X_AXIS_MAX - ((int)xa * XB_MAX) + (XB_MAX - (int)xb);
+				break;
+			case 7:
+				x = ((int)ya * YB_MAX) + ((int)yb);
+				y = X_AXIS_MAX - ((int)xa * XB_MAX) + (XB_MAX - (int)xb);
 
 		}
 
